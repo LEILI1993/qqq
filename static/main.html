@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <script type="text/javascript">
+        BASE_IMG_URL = 'https://img.alicdn.com/bao/uploaded/';
+        $(function () {
+            $.get('http://127.0.0.1:9000/index/',function () {
+                if (reslut.status === 200){
+                    data = reslut.data;
+                    if (data){
+                        $('#movies_top')
+                            .append($('<span>')).text('正在热映(' + data.hots_count + ')')
+                            .append($('<span>')).text('正在热映(' + data.nows_count + ')');
+                        let $movies_ul = $('<ul>');
+                        for (let i of data.hots) {
+                            let movie = data.hots[i];
+                            {#创建元素#}
+                            let $movies_li = $('<li>');
+                            {#创建li的子元素div#}
+                            let $movies_li_div = $('<div>');
+                            {#创建img元素#}
+                            let $img = $('<img>').atter('src',  BASE_IMG_URL + movie.bg_pic).width(200);
+                            $movies_li_div.append($img);
+                            $('<p>').append($('<span>').text(movie.chinese_name)).append($('<span>').text(9.1)).appendTo($movies_li_div);
+                            $movies_li.append($movies_li_div);
+
+                            $("<a>").text('选座').attr('href', '#').appendTo($movies_li);
+                            //添加到ul中去
+                            $movies_ul.append($movies_li)
+                        }
+                        $('#movies_content').append($movies_ul)
+                    }
+                }
+
+            })
+
+        })
+    </script>
+</head>
+<body>
+<div>
+    <!-- 影片头部  -->
+    <div id="movies_top">
+    </div>
+    <div id="movies_content">
+    </div>
+
+</div>
+
+</body>
+</html>

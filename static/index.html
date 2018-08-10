@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <link rel="stylesheet" href="css/common.css" type="text/css">
+    <style type="text/css">
+        #movies_top {
+            padding: 10px;
+            border-bottom: 1px solid gray;
+        }
+
+        #movies_top > span {
+            font-size: 18px;
+            color: black;
+            padding: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /*相对定位        参照物  自身   左上    特点   占据原来文档流的位置 */
+        /*绝对定位        参照物  最近父类元素不是static    特点   脱离文档流  */
+        #movies_content {
+            padding: 10px;
+        }
+
+        #movies_content li {
+            float: left;
+            width: 18%;
+        }
+
+        #moves_content_ul > li > div {
+            position: relative;
+        }
+
+        #moves_content_ul > li > div > p {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        #moves_content_ul > li > div > p > span {
+            font-size: 16px;
+            padding: 5px;
+            color: white;
+        }
+
+        #moves_content_ul {
+            display: none;
+        }
+
+        #moves_content_ul > li > div > p > span {
+            font-size: 16px;
+            padding: 5px;
+            color: white;
+        }
+
+        .movie_msg_div {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        .movie_msg_div > p {
+            font-size: 18px;
+            color: white;
+            padding: 5px;
+        }
+
+
+    </style>
+
+    <script type="text/javascript">
+        BASE_IMG_URL = 'https://img.alicdn.com/bao/uploaded/';
+        $(function () {
+            $.get('http://127.0.0.1:9000/index/', function (reslut) {
+                    if (reslut.status === 200) {
+                        data = reslut.data;
+                        if (data) {
+                            <!-- 添加影片头部 -->
+                            $('#movies_top')
+                                .append($('<span>').text('正在热映(' + data.hots_count + ')'))
+                                .append($("<span>").text('即将上映(' + data.nows_count + ')'));
+                            let $movies_ul = $('<ul>').attr('class', 'clear').attr('id', 'moves_content_ul');
+                            for (let i = 0; i < data.hots.length; i++) {
+                                let movie = data.hots[i];
+                                // 创建元素
+                                let $movies_li = $('<li>');
+                                // 创建li的子元素div
+                                let $movies_li_div = $('<div>').attr('id', 'movies_div_id');
+                                // 创建img元素
+                                let $img = $('<img>').attr('src', BASE_IMG_URL + movie.bg_pic).width(200);
+
+                                //添加显示隐藏的部分
+                                let $movie_msg_div = $('<div>').attr('class', 'movie_msg_div');
+                                let $movie_msg_director = $('<p>').text('导演: ' + movie.director);
+                                let $movie_msg_lead = $('<p>').text('主演: ' + movie.leadingRole);
+                                $movie_msg_div.append($movie_msg_director);
+                                $movie_msg_div.append($movie_msg_lead);
+                                $movies_li_div.append($movie_msg_div);
+                                $movies_li_div.append($img);
+
+                                $('<p>').append($('<span>').text(movie.chinese_name)).append($('<span>').text(9.1)).appendTo($movies_li_div);
+                                $movies_li.append($movies_li_div);
+                                $("<a>").text('选座').attr('href', '#').appendTo($movies_li);
+                                // 添加到ul中去
+                                $movies_ul.append($movies_li);
+                            }
+                            $('#movies_content').append($movies_ul);
+                            show_movie();
+                            show_msg()
+                        }
+                    }
+                }
+            );
+
+            function show_msg() {
+                $('#moves_content_ul>li>div').mouseover(function () {
+                    $(this).find('div').show()
+                })
+                $('#moves_content_ul>li>div').mouseout(function () {
+                    $(this).find('div').hide()
+                })
+            }
+
+            function show_movie() {
+                $('#movies_top>span:first').click(function () {
+                    $('#movies_content>ul:first').toggle();
+                    $('#movies_content>ul:last').toggle();
+                });
+
+                $('#movies_top>span:last').click(function () {
+                    $('#movies_content>ul:first').toggle();
+                    $('#movies_content>ul:last').toggle();
+                })
+            }
+
+        })
+    </script>
+</head>
+<body>
+
+<div>
+    <!-- 影片头部  -->
+    <div id="movies_top">
+
+    </div>
+    <div id="movies_content">
+        <ul style="width: 500px;height: 500px;background: red"></ul>
+    </div>
+
+</div>
+</body>
+</html>
